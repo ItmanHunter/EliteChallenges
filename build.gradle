@@ -1,0 +1,92 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:4.0.0"
+    }
+}
+
+
+plugins {
+    id 'net.ltgt.apt' version '0.10'
+}
+apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: 'java'
+
+group = pluginGroup
+version = pluginVersion
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
+    }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+    flatDir {
+        dirs './/jars'
+    }
+    maven {
+        url = "https://repo.aikar.co/content/groups/aikar/"
+    }
+    maven {
+        url = "https://hub.spigotmc.org/nexus/content/groups/public/"
+    }
+    maven {
+        name = "codemc-repo"
+        url = "https://repo.codemc.org/repository/maven-public/"
+    }
+    maven {
+        name = "VaultAPI"
+        url = "https://ci.ender.zone/plugin/repository/everything/"
+    }
+    maven {
+        url = "http://dl.bintray.com/tastybento/maven-repo"
+    }
+    maven { url 'https://jitpack.io' }
+}
+
+compileJava {
+    options.compilerArgs += ["-parameters"]
+    options.fork = true
+    options.forkOptions.executable = 'javac'
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compileOnly 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
+    compile "co.aikar:acf-core:0.5.0-SNAPSHOT"
+    compile "co.aikar:acf-paper:0.5.0-SNAPSHOT"
+    compile "de.tr7zw:item-nbt-api-plugin:2.2.0"
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+    compileOnly name: 'Factions'
+    compileOnly name: 'worldedit-bukkit-6.1.9 (1)'
+    compileOnly name: 'worldguard-bukkit-6.2.2 (1)'
+    compileOnly "com.wasteofplastic:askyblock:3.0.8.2"
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+}
+
+shadowJar {
+    relocate 'co.aikar.commands', 'net.splodgebox.elitechallenges.acf'
+    relocate 'co.aikar.timings.lib', 'net.splodgebox.elitechallenges.acf.lib'
+}
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [version: version]
+    }
+}
+
+build.dependsOn shadowJar
