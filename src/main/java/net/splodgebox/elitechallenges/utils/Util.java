@@ -56,12 +56,12 @@ public class Util {
 		return month + " " + date + ", " + year;
 	}
 
-	public static String timeMessage(int seconds) {
+	public static String timeMessage(long seconds) {
 		int day = (int) TimeUnit.SECONDS.toDays(seconds);
 		long hours = TimeUnit.SECONDS.toHours(seconds) - (day * 24);
 		long minute = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds) * 60);
 		long second = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) * 60);
-		return hours + "h " + minute + "m " + second + "s";
+		return day + " Days " + hours + "h " + minute + "m " + second + "s";
 	}
 
 	public static String color(String string) {

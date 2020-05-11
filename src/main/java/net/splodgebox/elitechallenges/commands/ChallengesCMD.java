@@ -27,8 +27,21 @@ public class ChallengesCMD extends BaseCommand {
 
     @Subcommand("reset")
     public void resetChallenges(CommandSender commandSender) {
-        ChallengeTimeUpdater.counter = 86400;
+        if (commandSender instanceof Player && !(commandSender.isOp() || commandSender.hasPermission("challenges.reload") )) {
+            return;
+        }
+        ChallengeTimeUpdater.counter = EliteChallenges.getInstance().getConfig().getInt("counter",86400);
         ChallengesGUI.resetChallengesInGUI();
         commandSender.sendMessage(Util.color(EliteChallenges.getInstance().getConfig().getString("messages.challenges-reset-message")));
     }
+
+    @Subcommand("reload")
+    public void reloadChallenges(CommandSender commandSender) {
+        if (commandSender instanceof Player && !(commandSender.isOp() || commandSender.hasPermission("challenges.reload") )) {
+            return;
+        }
+        EliteChallenges.getInstance().reload();
+        commandSender.sendMessage(Util.color(EliteChallenges.getInstance().getConfig().getString("messages.challenges-reload-message")));
+    }
+
 }

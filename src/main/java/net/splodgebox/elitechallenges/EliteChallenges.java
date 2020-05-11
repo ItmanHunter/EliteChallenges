@@ -13,17 +13,48 @@ import net.splodgebox.elitechallenges.utils.WorldGuardAPI;
 import net.splodgebox.elitechallenges.utils.gui.GuiListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 public class EliteChallenges extends JavaPlugin {
 
+	ChallengeTimeUpdater challengeRunner;
+	TimeChallengesListener timeChallengesListener;
+
 	@Getter
 	private static EliteChallenges instance;
 	
 	public FileManager dataconfig;
 	public WorldGuardAPI worldGuardAPI;
+
+	public void reload() {
+		deleteData();
+		reloadConfig();
+		Challenge.challenges.clear();
+		for (String key : getConfig().getConfigurationSection("challenges").getKeys(false)) {
+			String path = "challenges." + key;
+			Challenge challenge = new Challenge(key, ChallengeType.valueOf(getConfig().getString(path + ".type")),
+					getConfig().getStringList(path + ".object-types"), new LinkedHashMap<String, Integer>());
+			Challenge.challenges.add(challenge);
+		}
+		registerDataFile();
+		if (ChallengesGUI.challengesInGUI.size() == 0) {
+			ChallengesGUI.resetChallengesInGUI();
+		}
+		challengeRunner.cancel();
+		timeChallengesListener.cancel();
+		challengeRunner = new ChallengeTimeUpdater();
+		challengeRunner.runTaskTimer(this, 20, 20);
+		timeChallengesListener = new TimeChallengesListener();
+		timeChallengesListener.runTaskTimer(this, 20, 20);
+	}
+
+	private void deleteData() {
+		File dataFile = new File(getDataFolder().getAbsolutePath(),"data.yml");
+		dataFile.delete();
+	}
 
 	public void onEnable() {
 		instance = this;
@@ -64,12 +95,14 @@ public class EliteChallenges extends JavaPlugin {
 			}
 		}));
 
-		new ChallengeTimeUpdater().runTaskTimer(this, 20, 20);
-		new TimeChallengesListener().runTaskTimer(this, 20, 20);
+		challengeRunner = new ChallengeTimeUpdater();
+		challengeRunner.runTaskTimer(this, 20, 20);
+		timeChallengesListener = new TimeChallengesListener();
+		timeChallengesListener.runTaskTimer(this, 20, 20);
 	}
 
 	public void onDisable() {
-		dataconfig.getConfig().set("timer.time", Integer.toString(ChallengeTimeUpdater.counter));
+		dataconfig.getConfig().set("timer.time", Long.toString(ChallengeTimeUpdater.counter));
 		dataconfig.getConfig().createSection("challengesActive");
 		dataconfig.getConfig().createSection("playerData");
 		ChallengesGUI.challengesInGUI.forEach(challenge -> {

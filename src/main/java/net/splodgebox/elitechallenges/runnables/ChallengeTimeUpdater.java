@@ -18,7 +18,11 @@ import net.splodgebox.elitechallenges.utils.Util;
 
 public class ChallengeTimeUpdater extends BukkitRunnable {
 
-	public static int counter = 86400;
+	public static long counter;
+
+	public ChallengeTimeUpdater() {
+		counter = EliteChallenges.getInstance().getConfig().getLong("counter",86400);
+	}
 
 	public void run() {
 		counter = counter - 1;
@@ -29,7 +33,7 @@ public class ChallengeTimeUpdater extends BukkitRunnable {
 	
 	public void resetChallenges() {
 		FileConfiguration config = EliteChallenges.getInstance().getConfig();
-		counter = 86400;
+		counter = EliteChallenges.getInstance().getConfig().getInt("counter",86400);
 		Util.sortRanks();
 		for (Challenge challenge : ChallengesGUI.challengesInGUI) {
 			ArrayList<String> playerNames = new ArrayList<>(challenge.getCounters().keySet());
@@ -95,7 +99,7 @@ public class ChallengeTimeUpdater extends BukkitRunnable {
 		}
 	}
 
-	public static int getCounter() {
+	public static long getCounter() {
 		return counter;
 	}
 

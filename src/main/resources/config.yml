@@ -1,6 +1,8 @@
+counter: 86400
 messages:
   time-message: "&a&lThere is &c&l%time% &a&luntil this challenge ends!"
   challenges-reset-message: "&a&lThe challenges have been reset, there are now new challenges!"
+  challenges-reload-message: "&a&lThe challenges have been reloaded, there are now new challenges!"
   challenge-finished-broadcast:
   - '&a&l&nThe Challenges Have Successfully Been Finished!'
   - ' '

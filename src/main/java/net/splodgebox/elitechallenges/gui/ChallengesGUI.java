@@ -107,7 +107,7 @@ public class ChallengesGUI {
 	
 	public static void resetChallengesInGUI() {
 		challengesInGUI.clear();
-		LinkedHashSet<Challenge> hashSet = new LinkedHashSet<>(Challenge.getRandomChallenges(5));
+		LinkedHashSet<Challenge> hashSet = new LinkedHashSet<>(Challenge.getRandomChallenges(3));
 		challengesInGUI.addAll(hashSet);
 	}
 	
